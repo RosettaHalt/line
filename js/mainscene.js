@@ -20,7 +20,6 @@
       var self = this;
       this.ballGroup.update = function(app){
         if(app.frame % 30 == 0 && self.ballNum < self.BALL_MAX){
-          console.log(0);
           var ball = Ball();
           this.addChild( ball );
           ++self.ballNum;
@@ -32,19 +31,20 @@
 
     /* シーンの更新 */
     update: function(){
-      // 画面クリックでシーン切り替え
-      /*
-      console.log(this.chara.x, this.chara.y, app.pointing.x, app.pointing.y)
-      if ( this.chara.isHitPoint(app.pointing.x, app.pointing.y) == true){
-        console.log("Hit");
-        this.addChild( tm.fade.FadeOut(
-            app.width, app.height, "#000", 1000, function(){
-              app.replaceScene(EndScene());
-            })
-        );
+      // ラインとボールの判定
+      for(var i = 0; i < this.ballGroup.children.length; ++i){
+        var ball = this.ballGroup.children[i];
+        /*
+        if(this.line.isHitElement(ball) == true){
+          console.log("ball hit");
+          ball.remove();
+          --this.ballNum;
+          console.log(this.line.x, this.line.y, this.line.width, this.line.height);
+          console.log(ball.x, ball.y, ball.width, ball.height);
+          console.log("\n");
+        }
+        */
       }
-      */
-
     },
 
     /* ポーズ画面 : 別タブへ切り替わった時 / Tabキーを押した時 */
@@ -77,49 +77,58 @@ var Line = tm.createClass({
     c.fillRect(0, 0, this.width, this.height);
   }
 });
+
+/*
  * ボール
  */
 var Ball = tm.createClass({
-  superClass: tm.app.CanvasElement,
+  superClass:tm.app.CanvasElement,
 
-  init: function(){
+  init:function () {
     this.width = this.height = Math.rand(20, 40);
-    this.superInit(this.width, this.height);
+    this.superInit();
 
-    this.x = Math.rand(this.width, SCREEN_WIDTH-this.width);
-    this.y = Math.rand(this.height, SCREEN_HEIGHT-this.height);
+    this.x = Math.rand(this.width, SCREEN_WIDTH - this.width);
+    this.y = Math.rand(this.height, SCREEN_HEIGHT - this.height);
     this.y = 0;
 
-    this.fillStyle = "#FFFFFF";
-    this.radius = this.width;
+    //this.radius = this.width;
 
     this.type = 0;  // 挙動タイプ
     this.speed = {
-      "x": Math.rand(5,20),
-      "y": Math.rand(5,20)
+      "x":Math.rand(5, 15),
+      "y":Math.rand(5, 15)
     };
     this.timer = 0;
+    this.color = "hsla(200, 75%, 50%, 0.90)";
+    this.fillStyle = "#FFFFFF";
+    this.fillStyle = this.color;
   },
 
-  update: function(){
+  update:function () {
     ++this.timer;
     this.move();
   },
 
-  draw: function(c){
+  draw:function (c) {
     c.fillCircle(0, 0, this.radius);
     c.strokeStyle = "white";
     c.lineWidth = 2;
-    c.strokeCircle(0, 0, this.radius+1);
+    c.strokeCircle(0, 0, this.radius + 1);
+    c.setTransformCenter();
   },
 
-  move: function(){
+  move:function () {
     this.x += this.speed.x;
     this.y += this.speed.y;
 
 
-    if(this.x < 0 || this.x > SCREEN_WIDTH){ this.speed.x*=-1; }
-    if(this.y < 0 || this.y > SCREEN_HEIGHT){ this.speed.y*=-1; }
+    if (this.x < 0 || this.x > SCREEN_WIDTH) {
+      this.speed.x *= -1;
+    }
+    if (this.y < 0 || this.y > SCREEN_HEIGHT) {
+      this.speed.y *= -1;
+    }
 
   }
-})
+});
