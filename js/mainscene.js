@@ -6,15 +6,30 @@
     init: function(){
       this.superInit();
       userData.score = 0; // スコアを初期化
+      this.ballNum = 0; // 敵の数
+      this.BALL_MAX = 10; //敵の最大数
 
-      this.chara = Character(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 64, 64);   // 自機を生成
-      this.addChild(this.chara);  // 自機をシーンに追加
+      /* ボールを生成 */
+      this.ballGroup = null;
+      this.ballGroup = tm.app.CanvasElement();
+      this.addChild(this.ballGroup);
+      var self = this;
+      this.ballGroup.update = function(app){
+        if(app.frame % 30 == 0 && self.ballNum < self.BALL_MAX){
+          console.log(0);
+          var ball = Ball();
+          this.addChild( ball );
+          ++self.ballNum;
+        }
+      }
+
       console.log("main");
     },
 
     /* シーンの更新 */
     update: function(){
-      // 画面クリックでシーン切り替え{
+      // 画面クリックでシーン切り替え
+      /*
       console.log(this.chara.x, this.chara.y, app.pointing.x, app.pointing.y)
       if ( this.chara.isHitPoint(app.pointing.x, app.pointing.y) == true){
         console.log("Hit");
@@ -24,6 +39,7 @@
             })
         );
       }
+      */
 
     },
 
@@ -35,21 +51,33 @@
 })(window);
 
 /*
- * 自機
+ * ボール
  */
-var Character = tm.createClass({
+var Ball = tm.createClass({
   superClass: tm.app.CanvasElement,
 
-  init: function(x,y,w,h){
-    this.superInit(w,h);
-    this.x = x;
-    this.y = y;
+  init: function(){
+    this.width = this.height = Math.rand(20, 40);
+    this.superInit(this.width, this.height);
+
+    this.x = Math.rand(this.width, SCREEN_WIDTH-this.width);
+    this.y = Math.rand(this.height, SCREEN_HEIGHT-this.height);
+    this.y = 0;
+
     this.fillStyle = "#FFFFFF";
-    this.radius = 8;
+    this.radius = this.width;
+
+    this.type = 0;  // 挙動タイプ
+    this.speed = {
+      "x": Math.rand(5,20),
+      "y": Math.rand(5,20)
+    };
+    this.timer = 0;
   },
 
   update: function(){
-    this.control();
+    ++this.timer;
+    this.move();
   },
 
   draw: function(c){
@@ -59,22 +87,13 @@ var Character = tm.createClass({
     c.strokeCircle(0, 0, this.radius+1);
   },
 
-  control: function(){
-    if( app.pointing.getPointing() == true ){
-      if(this.x < app.pointing.x){
-        this.x += 5;
-      }
-      else{
-        this.x -= 5;
-      }
-    }
-    if( app.pointing.getPointing() == true ){
-      if(this.y < app.pointing.y){
-        this.y += 5;
-      }
-      else{
-        this.y -= 5;
-      }
-    }
+  move: function(){
+    this.x += this.speed.x;
+    this.y += this.speed.y;
+
+
+    if(this.x < 0 || this.x > SCREEN_WIDTH){ this.speed.x*=-1; }
+    if(this.y < 0 || this.y > SCREEN_HEIGHT){ this.speed.y*=-1; }
+
   }
 })

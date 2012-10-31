@@ -12,7 +12,7 @@ tm.main(function(){
   userData = tm.util.DataManager.get("user-data");
 
   // タイトルへ
-  app.replaceScene(TitleScene());
+  app.replaceScene(MainScene());
 
   app.run();
 });
