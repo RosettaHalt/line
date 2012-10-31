@@ -9,6 +9,10 @@
       this.ballNum = 0; // 敵の数
       this.BALL_MAX = 10; //敵の最大数
 
+      /* 自機のラインを生成 */
+      this.line = Line();   // 自機を生成
+      this.addChild(this.line);  // 自機をシーンに追加
+
       /* ボールを生成 */
       this.ballGroup = null;
       this.ballGroup = tm.app.CanvasElement();
@@ -51,6 +55,28 @@
 })(window);
 
 /*
+ * ライン
+ */
+var Line = tm.createClass({
+  superClass:tm.app.CanvasElement,
+
+  init:function () {
+    this.superInit();
+    this.width = SCREEN_WIDTH;
+    this.height = 10;
+    this.x = 0;
+    this.y = SCREEN_HEIGHT/2;
+    this.color = "#FFFFFF";
+  },
+
+  update:function () {
+  },
+
+  draw:function (c) {
+    c.fillStyle = this.color;
+    c.fillRect(0, 0, this.width, this.height);
+  }
+});
  * ボール
  */
 var Ball = tm.createClass({
