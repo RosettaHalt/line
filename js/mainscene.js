@@ -81,7 +81,8 @@ var Line = tm.createClass({
   init:function () {
     this.superInit();
     this.width = SCREEN_WIDTH;
-    this.height = 60;
+    this.height = 64;
+    if(tm.isMobile){ this.height = 96; }
     this.x = 0;
     this.y = SCREEN_HEIGHT/2;
     this.color = "white";
@@ -97,7 +98,7 @@ var Line = tm.createClass({
 
   draw:function (c) {
     c.fillStyle = this.color;
-    c.fillRect(0, 0, this.width, this.height);
+    c.fillRect(0, -(this.height/2), this.width, this.height);
   }
 });
 
