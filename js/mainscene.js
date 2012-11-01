@@ -34,6 +34,7 @@
       // ラインとボールの判定
       var hitCount = 0;
       if(app.pointing.getPointingStart()){
+        tm.sound.SoundManager.get("touch").play();
         this.line.color = "red";
         this.line.colorTimer = 5;
         for(var i = 0; i < this.ballGroup.children.length; ++i){
