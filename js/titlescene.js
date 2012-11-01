@@ -7,8 +7,8 @@
       children: [
         {
           type:"Label",name:"scoreLabel",
-          x:360,y:360,width:240,fillStyle:"white",
-          text:"line",fontSize:48,align:"center"
+          x:320,y:360,width:640,fillStyle:"white",
+          text:"line",fontSize:64,align:"center"
         }
       ]
     }
