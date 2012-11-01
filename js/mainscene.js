@@ -122,6 +122,7 @@ var Ball = tm.createClass({
       "x":Math.rand(5, 15),
       "y":Math.rand(5, 15)
     };
+    if(Math.rand(0,1) == 0){ this.speed.x *= -1; }
     this.timer = 0;
     this.color = "hsla(200, 75%, 50%, 0.90)";
     this.fillStyle = "#FFFFFF";
