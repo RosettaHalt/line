@@ -5,7 +5,7 @@
       children: [
         {
           type:"Label",name:"scoreLabel",
-          x:240,y:360,width:480,fillStyle:"white",
+          x:320,y:360,width:480,fillStyle:"white",
           text:"dammy",fontSize:48,align:"center"
         }
       ]
@@ -24,15 +24,12 @@
 
       // タイトルボタン
       var iphoneButton = tm.app.iPhoneButton(120, 60, "black");
-      iphoneButton.setPosition(120,640);
+      iphoneButton.setPosition(200,640);
       iphoneButton.label.text = "Title";
       this.addChild(iphoneButton);
+      var self = this;
       iphoneButton.onpointingstart = function(){
-        this.addChild( tm.fade.FadeOut(
-            app.width, app.height, "#000", 1000, function(){
-              app.replaceScene(TitleScene());
-            })
-        );
+        self.nextScene();
       };
 
       // ツイートボタン
@@ -40,10 +37,10 @@
         type: "tweet",
         text: "line\nScore : {0}連鎖\n".format(userData.score),
         hashtags: "js,javascript,tmline,tmlibjs",
-        url: "http://example.com"
+        url: "http://bit.ly/SzzbPM"
       });
       var tweetButton = tm.app.iPhoneButton(120, 60, "black");
-      tweetButton.setPosition(360, 640);
+      tweetButton.setPosition(440, 640);
       tweetButton.label.text = "Tweet";
       this.addChild(tweetButton);
       tweetButton.onpointingstart = function(){
@@ -52,6 +49,14 @@
     },
 
     update: function(){
+    },
+
+    nextScene: function(){
+      this.addChild( tm.fade.FadeOut(
+          app.width, app.height, "#000", 1000, function(){
+            app.replaceScene(TitleScene());
+          })
+      );
     },
 
     /* ポーズ画面 : 別タブへ切り替わった時 / Tabキーを押した時 */
