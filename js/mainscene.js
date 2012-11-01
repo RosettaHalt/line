@@ -32,19 +32,36 @@
     /* シーンの更新 */
     update: function(){
       // ラインとボールの判定
-      for(var i = 0; i < this.ballGroup.children.length; ++i){
-        var ball = this.ballGroup.children[i];
-        /*
-        if(this.line.isHitElement(ball) == true){
-          console.log("ball hit");
-          ball.remove();
-          --this.ballNum;
-          console.log(this.line.x, this.line.y, this.line.width, this.line.height);
-          console.log(ball.x, ball.y, ball.width, ball.height);
-          console.log("\n");
+      var hitCount = 0;
+      if(app.pointing.getPointingStart()){
+        this.line.color = "red";
+        this.line.colorTimer = 5;
+        for(var i = 0; i < this.ballGroup.children.length; ++i){
+          var ball = this.ballGroup.children[i];
+          if( this.isHitLineToBall(this.line, ball) ){
+            console.log("ball hit");
+            ball.remove();
+            --this.ballNum;
+            ++userData.score;
+            ++hitCount;
+          }
         }
-        */
+        if(hitCount == 0){
+          this.addChild( tm.fade.FadeOut(
+              app.width, app.height, "#000", 1000, function(){
+                app.replaceScene(EndScene());
+              })
+          );
+        }
       }
+    },
+
+    /* ラインとボールの衝突判定 */
+    isHitLineToBall: function(val1, val2){
+      if(val2.y > (val1.y-(val1.height/2)) && val2.y < (val1.y+(val1.height/2))){
+        return true;
+      }
+      return false;
     },
 
     /* ポーズ画面 : 別タブへ切り替わった時 / Tabキーを押した時 */
@@ -63,13 +80,18 @@ var Line = tm.createClass({
   init:function () {
     this.superInit();
     this.width = SCREEN_WIDTH;
-    this.height = 10;
+    this.height = 60;
     this.x = 0;
     this.y = SCREEN_HEIGHT/2;
-    this.color = "#FFFFFF";
+    this.color = "white";
+    this.colorTimer = 30;
   },
 
   update:function () {
+    --this.colorTimer;
+    if(this.colorTimer < 0){
+      this.color = "white";
+    }
   },
 
   draw:function (c) {
