@@ -27,3 +27,16 @@ var TITLE_WAVE_IMAGE = (function(){
 
   return c;
 })();
+
+var LINE_IMAGE = (function(){
+  var c = tm.graphics.Canvas();
+  c.width = 640;
+  c.height = 1136;
+  c.fillStyle = "white";
+  c.fillRect(0, 0, c.width, c.height);
+  c.setTransformCenter();
+  c.strokeStyle = "white";
+  c.lineWidth = 5;
+  c.strokeRect(0, 0, c.width, c.height);
+  return c;
+})();
