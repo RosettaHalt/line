@@ -7,7 +7,7 @@
       this.superInit();
       userData.score = 0; // スコアを初期化
       this.ballNum = 0; // 敵の数
-      this.BALL_MAX = 1000; //敵の最大数
+      this.BALL_MAX = 10; //敵の最大数
 
       /* 自機のラインを生成 */
       this.line = Line();   // 自機を生成
@@ -32,21 +32,37 @@
     /* シーンの更新 */
     update: function(){
       // ラインとボールの判定
-      for(var i = 0; i < this.ballGroup.children.length; ++i){
-        var ball = this.ballGroup.children[i];
-        if(this.line.isHitElement(ball) == true){
-          console.log("ball hit");
-          ball.remove();
-          --this.ballNum;
-          console.log(this.line.x, this.line.y, this.line.width, this.line.height);
-          console.log(ball.x, ball.y, ball.width, ball.height);
-          console.log("\n");
+      var hitCount = 0;
+      if(app.pointing.getPointingStart()){
+        tm.sound.SoundManager.get("touch").play();
+        this.line.color = "red";
+        this.line.colorTimer = 5;
+        for(var i = 0; i < this.ballGroup.children.length; ++i){
+          var ball = this.ballGroup.children[i];
+          if( this.isHitLineToBall(this.line, ball) ){
+            console.log("ball hit");
+            ball.remove();
+            --this.ballNum;
+            ++userData.score;
+            ++hitCount;
+          }
         }
-        if(this.line.isHitPoint(app.pointing.x, app.pointing.y) == true){
-          console.log("hit point");
+        if(hitCount == 0){
+          this.addChild( tm.fade.FadeOut(
+              app.width, app.height, "#000", 1000, function(){
+                app.replaceScene(EndScene());
+              })
+          );
         }
-
       }
+    },
+
+    /* ラインとボールの衝突判定 */
+    isHitLineToBall: function(val1, val2){
+      if(val2.y > (val1.y-(val1.height/2)) && val2.y < (val1.y+(val1.height/2))){
+        return true;
+      }
+      return false;
     },
 
     /* ポーズ画面 : 別タブへ切り替わった時 / Tabキーを押した時 */
@@ -63,33 +79,26 @@ var Line = tm.createClass({
   superClass:tm.app.CanvasElement,
 
   init:function () {
+    this.superInit();
     this.width = SCREEN_WIDTH;
-    this.height = 30;
-    this.superInit(this.width, this.height);
+    this.height = 64;
+    if(tm.isMobile){ this.height = 96; }
     this.x = 0;
     this.y = SCREEN_HEIGHT/2;
-    this.color = "#FFFFFF";
-
-    // this.img = tm.app.Shape(this.width, this.height);
-    // this.img.canvas = LINE_IMAGE;
-    // this.img.x = 320;
-    // this.addChild(this.img);
+    this.color = "white";
+    this.colorTimer = 30;
   },
 
   update:function () {
+    --this.colorTimer;
+    if(this.colorTimer < 0){
+      this.color = "white";
+    }
   },
 
   draw:function (c) {
-
-    c.fillRect(0, 0, this.width, this.height);
-    //drawBoundingRect(c);
-    // c.fillStyle = this.color;
-    // c.fillRect(this.x, 0-(this.height/2), this.width, this.height);
-
-    // c.strokeStyle = "hsla(200, 75%, 50%, 0.90)";
-    // c.lineWidth = 2;
-    // c.strokeRect(this.x, 0-(this.height/2), this.width, this.height);
-    // c.setTransformCenter();
+    c.fillStyle = this.color;
+    c.fillRect(0, -(this.height/2), this.width, this.height);
   }
 });
 
@@ -111,9 +120,10 @@ var Ball = tm.createClass({
 
     this.type = 0;  // 挙動タイプ
     this.speed = {
-      "x":Math.rand(5, 30),
-      "y":Math.rand(5, 30)
+      "x":Math.rand(5, 15),
+      "y":Math.rand(5, 15)
     };
+    if(Math.rand(0,1) == 0){ this.speed.x *= -1; }
     this.timer = 0;
     this.color = "hsla(200, 75%, 50%, 0.90)";
     this.fillStyle = "#FFFFFF";
@@ -134,16 +144,16 @@ var Ball = tm.createClass({
   },
 
   move:function () {
-//    this.x += this.speed.x;
+    this.x += this.speed.x;
     this.y += this.speed.y;
 
 
-    // if (this.x < 0 || this.x > SCREEN_WIDTH) {
-    //   this.speed.x *= -1;
-    // }
-    // if (this.y < 0 || this.y > SCREEN_HEIGHT) {
-    //   this.speed.y *= -1;
-    // }
+    if (this.x < 0 || this.x > SCREEN_WIDTH) {
+      this.speed.x *= -1;
+    }
+    if (this.y < 0 || this.y > SCREEN_HEIGHT) {
+      this.speed.y *= -1;
+    }
 
   }
 });
